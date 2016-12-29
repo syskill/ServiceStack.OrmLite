@@ -131,17 +131,17 @@ namespace ServiceStack.OrmLite.PostgreSQL
 			if (fieldType.IsArray && typeof(string).IsAssignableFrom(fieldType.GetElementType()))
 			{
 				var stringArray = (string[]) value;
-				return ToArray(stringArray);
+				return ToArray(stringArray) + "::text[]";
 			}
 			if (fieldType.IsArray && typeof(int).IsAssignableFrom(fieldType.GetElementType()))
 			{
 				var integerArray = (int[]) value;
-				return ToArray(integerArray);
+				return ToArray(integerArray) + "::integer[]";
 			}
 			if (fieldType.IsArray && typeof(long).IsAssignableFrom(fieldType.GetElementType()))
 			{
 				var longArray = (long[]) value;
-				return ToArray(longArray);
+				return ToArray(longArray) + "::bigint[]";
 			}
 
 			return base.GetQuotedValue(value, fieldType);
