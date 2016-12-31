@@ -153,6 +153,17 @@ namespace ServiceStack.OrmLite.PostgreSQL
 			
 			if (type == typeof(byte[])) { return value; }
 
+			if (type.IsArray)
+			{
+				var str = value.ToString();
+				var last = str.Length - 1;
+				if (str[0] == '{' && str[last] == '}')
+				{
+					var copy = "[" + str.Substring(1, last - 1) + "]";
+					return base.ConvertDbValue(copy, type);
+				}
+			}
+
 			return base.ConvertDbValue(value, type);
 		}
 		
