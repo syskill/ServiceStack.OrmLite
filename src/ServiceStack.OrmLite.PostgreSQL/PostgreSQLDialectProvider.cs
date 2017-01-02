@@ -131,17 +131,17 @@ namespace ServiceStack.OrmLite.PostgreSQL
 			if (fieldType.IsArray && typeof(string).IsAssignableFrom(fieldType.GetElementType()))
 			{
 				var stringArray = (string[]) value;
-				return ToArray(stringArray) + "::text[]";
+				return ToArray(stringArray, "text");
 			}
 			if (fieldType.IsArray && typeof(int).IsAssignableFrom(fieldType.GetElementType()))
 			{
 				var integerArray = (int[]) value;
-				return ToArray(integerArray) + "::integer[]";
+				return ToArray(integerArray, "integer");
 			}
 			if (fieldType.IsArray && typeof(long).IsAssignableFrom(fieldType.GetElementType()))
 			{
 				var longArray = (long[]) value;
-				return ToArray(longArray) + "::bigint[]";
+				return ToArray(longArray, "bigint");
 			}
 
 			return base.GetQuotedValue(value, fieldType);
@@ -252,7 +252,7 @@ namespace ServiceStack.OrmLite.PostgreSQL
 			return res.ToString();
 		}
 
-		internal string ToArray<T>(T[] source)
+		internal string ToArray<T>(T[] source, string pgType)
 		{
 			var values = new StringBuilder();
 			foreach (var value in source)
@@ -260,7 +260,11 @@ namespace ServiceStack.OrmLite.PostgreSQL
 				if (values.Length > 0) values.Append(",");
 				values.Append(base.GetQuotedValue(value, typeof(T)));
 			}
-			return "ARRAY[" + values + "]";
+			values.Insert(0, "ARRAY[");
+			values.Append("]::");
+			values.Append(pgType);
+			values.Append("[]");
+			return values.ToString();
 		}
 	}
 }
